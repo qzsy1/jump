@@ -13,23 +13,31 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential git openjdk-11-jdk zip unzip
+
+    - name: Install Python dependencies
       run: |
         pip install --upgrade pip
-        pip install kivy python-for-android cython
+        pip install kivy cython
+
+    - name: Install python-for-android
+      run: |
+        pip install git+https://github.com/kivy/python-for-android.git@master
 
     - name: Build APK
       run: |
         cd android
         python -m pythonforandroid.toolchain apk \
-          --private \
           --name="跳一跳助手" \
           --version=1.0 \
           --package=com.jumpjump.auto \
@@ -40,7 +48,7 @@ jobs:
           main.py
 
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: jump-jump-apk
         path: android/bin/*.apk
