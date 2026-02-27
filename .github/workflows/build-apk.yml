@@ -1,0 +1,46 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:  # 手动触发
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'android/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install kivy python-for-android cython
+
+    - name: Build APK
+      run: |
+        cd android
+        python -m pythonforandroid.toolchain apk \
+          --private \
+          --name="跳一跳助手" \
+          --version=1.0 \
+          --package=com.jumpjump.auto \
+          --bootstrap=sdl2 \
+          --requirements=kivy,opencv-python-headless,pillow,pyjnius \
+          --arch=armeabi-v7a \
+          --orientations=portrait \
+          main.py
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: jump-jump-apk
+        path: android/bin/*.apk

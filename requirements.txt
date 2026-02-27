@@ -1,0 +1,5 @@
+customtkinter==5.2.2
+pyautogui==0.9.54
+Pillow
+opencv-python
+numpy

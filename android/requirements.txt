@@ -1,0 +1,5 @@
+kivy[base]
+opencv-python-headless
+pillow
+pyjnius
+python-for-android
