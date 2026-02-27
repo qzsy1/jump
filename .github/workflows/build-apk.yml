@@ -9,35 +9,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: ghcr.io/kivy/buildozer:master
+
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential openjdk-11-jdk
-        pip install --upgrade pip
-        pip install kivy cython
-
-    - name: Install python-for-android
-      run: pip install python-for-android
-
-    - name: Build APK
+    - name: Build APK with Buildozer
       working-directory: ./android
       run: |
-        python -m pythonforandroid.toolchain apk \
-          --name="JumpJump" \
-          --version=1.0 \
-          --package=com.jumpjump.auto \
-          --bootstrap=sdl2 \
-          --requirements=kivy,pillow \
-          --arch=armeabi-v7a \
-          --orientations=portrait \
-          main.py
+        buildozer android debug
 
     - uses: actions/upload-artifact@v4
       with:
