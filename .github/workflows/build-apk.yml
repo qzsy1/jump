@@ -1,26 +1,31 @@
-name: Build Android APK
+name: Build APK
 
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/kivy/buildozer:master
+      image: kivy/buildozer:master
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - name: Build APK with Buildozer
+    - name: Build APK
       working-directory: ./android
       run: |
+        echo "开始构建 APK..."
         buildozer android debug
+        echo "构建完成"
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
       with:
         name: jump-jump-apk
         path: android/bin/*.apk
+        if-no-files-found: error
